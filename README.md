@@ -54,7 +54,7 @@ alembic init alembic
 
 
 ```
-alembic revision --autogenerate -m "creat table"
+alembic revision --autogenerate -m "create table"
 alembic upgrade head
 ```
 
