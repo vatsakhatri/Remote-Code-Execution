@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Form</title>
+</head>
+<body>
+    <form id="requestForm">
+        <fieldset>
+            <legend>Request Body</legend>
+            
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title"><br><br>
+            
+            <label for="description">Description:</label><br>
+            <textarea id="description" name="description"></textarea><br><br>
+            
+            <label for="type">Type:</label><br>
+            <input type="text" id="type" name="type"><br><br>
+            
+            <fieldset>
+                <legend>Meta Data</legend>
+                
+                <label for="function_name">Function Name:</label><br>
+                <input type="text" id="function_name" name="function_name"><br><br>
+                
+                <label for="return_type">Return Type:</label><br>
+                <input type="text" id="return_type" name="return_type"><br><br>
+                
+                <fieldset id="variablesFieldset">
+                    <legend>Variables</legend>
+                </fieldset>
+                <button type="button" onclick="addVariable()">Add Variable</button>
+            </fieldset>
+            
+        </fieldset>
+        
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <script>
+        let variableCount = 0;
+
+        function addVariable() {
+            variableCount++;
+            const variablesFieldset = document.getElementById('variablesFieldset');
+
+            const nameLabel = document.createElement('label');
+            nameLabel.setAttribute('for', `name${variableCount}`);
+            nameLabel.textContent = `Variable ${variableCount} Name:`;
+            variablesFieldset.appendChild(nameLabel);
+            variablesFieldset.appendChild(document.createElement('br'));
+
+            const nameInput = document.createElement('input');
+            nameInput.setAttribute('type', 'text');
+            nameInput.setAttribute('id', `name${variableCount}`);
+            nameInput.setAttribute('name', `variables[name${variableCount}]`);
+            variablesFieldset.appendChild(nameInput);
+            variablesFieldset.appendChild(document.createElement('br'));
+
+            const typeLabel = document.createElement('label');
+            typeLabel.setAttribute('for', `type${variableCount}`);
+            typeLabel.textContent = `Variable ${variableCount} Type:`;
+            variablesFieldset.appendChild(typeLabel);
+            variablesFieldset.appendChild(document.createElement('br'));
+
+            const typeInput = document.createElement('input');
+            typeInput.setAttribute('type', 'text');
+            typeInput.setAttribute('id', `type${variableCount}`);
+            typeInput.setAttribute('name', `variables[type${variableCount}]`);
+            variablesFieldset.appendChild(typeInput);
+            variablesFieldset.appendChild(document.createElement('br'));
+            variablesFieldset.appendChild(document.createElement('br'));
+        }
+
+        function submitForm() {
+            const form = document.getElementById('requestForm');
+            const formData = new FormData(form);
+            const variables = {};
+            
+            for (let i = 1; i <= variableCount; i++) {
+                const name = formData.get(`variables[name${i}]`);
+                const type = formData.get(`variables[type${i}]`);
+                if (name && type) {
+                    variables[name] = type;
+                }
+            }
+
+            const data = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                type: formData.get('type'),
+                meta_data: {
+                    function_name: formData.get('function_name'),
+                    return_type: formData.get('return_type'),
+                    variables: variables
+                }
+            };
+
+            fetch('/add_ques', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

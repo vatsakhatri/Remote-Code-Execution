@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Case Form</title>
+</head>
+<body>
+    <form id="testcaseForm">
+        <fieldset>
+            <legend>Test Case Input Variables</legend>
+            {% for name, type in variables.items() %}
+                <label for="{{ name }}">{{ name }} ({{ type }}):</label><br>
+                <input type="text" id="{{ name }}" name="input_variables[{{ name }}]" data-type="{{ type }}"><br><br>
+            {% endfor %}
+        </fieldset>
+        <label for="output">Output:</label><br>
+        <input type="text" id="output" name="output"><br><br>
+        <button type="button" onclick="submitTestCase()">Submit</button>
+    </form>
+
+    <script>
+        function parseValue(value, type) {
+            switch (type) {
+                case 'int':
+                    return parseInt(value);
+                case 'float':
+                    return parseFloat(value);
+                case 'boolean':
+                    return value.toLowerCase() === 'true';
+                case 'vector<int>':
+                    return JSON.parse(value).map(Number);
+                case 'array':
+                    return JSON.parse(value);
+                default:
+                    return value;
+            }
+        }
+
+        function submitTestCase() {
+            const form = document.getElementById('testcaseForm');
+            const formData = new FormData(form);
+            const data = {
+                input_variables: {},
+                output: formData.get('output')
+            };
+            
+            formData.forEach((value, key) => {
+                if (key.startsWith('input_variables[')) {
+                    const variableName = key.substring(16, key.length - 1);
+                    const inputElement = form.querySelector(`[name="input_variables[${variableName}]"]`);
+                    const variableType = inputElement.getAttribute('data-type');
+                    data.input_variables[variableName] = parseValue(value, variableType);
+                }
+            });
+
+            fetch('/create/testcase/{{id}}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

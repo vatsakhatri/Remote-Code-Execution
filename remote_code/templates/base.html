@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Remote Code Execution</title>
+
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{url_for('add_ques')}}">Add Question</a></li>
+            <li><a href="">Add Test Case</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
