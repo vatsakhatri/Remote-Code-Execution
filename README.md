@@ -6,7 +6,7 @@
 ## Introduction
 
 
-In this documentation, we will understand the execution a user code upon some pre-defined testcases.
+In this documentation, we will understand the execution of a user code upon some pre-defined testcases.
 
 
 ## ***Backend Configuration***
@@ -24,7 +24,6 @@ In this documentation, we will understand the execution a user code upon some pr
 FastAPI
 SQLAlchemy
 Jinja2
-
 ```
 
 
@@ -34,6 +33,7 @@ Jinja2
 ```pip3 install -r requirements.txt```
 ### Alembic setup (Migrations)
 ```
+cd remote_code
 alembic init alembic
 ```
 - this will create a alembic folder and 📁 alembic.ini , below are the changes to be done   
@@ -61,6 +61,7 @@ alembic upgrade head
 
 ### Commands to run
 ```
+cd remote_code
 uvicorn main:app --relaod
 ```
 
@@ -69,7 +70,7 @@ uvicorn main:app --relaod
 ## Schemas
 
 
-- File path: ```src/schemas.py```
+- File path: ```remote_code/schemas.py```
 
 - ### Question schema
 
